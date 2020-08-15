@@ -1,5 +1,5 @@
 from yaw_controller import YawController 
-from low_pass import LowPassFilter
+from lowpass import LowPassFilter
 from pid import PID
 
 GAS_DENSITY = 2.858
