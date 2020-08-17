@@ -13,7 +13,7 @@ import yaml
 from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
-CLF_ENABLED = True
+CLF_ENABLED = False
 CLF_NAME = 'faster_rcnn_resnet101_coco_inference_graph_sim.pb'
 
 class TLDetector(object):
