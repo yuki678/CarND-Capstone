@@ -70,16 +70,14 @@ class TLClassifier(object):
         scores = np.squeeze(scores)
         classes = np.squeeze(classes).astype(np.int32)
         
-        # 
-        min_score_thresh = .5
+        # Thresholds
+        min_score_threshold = .5
         num_red = 0
         num_non_red = 0
 
         for i in range(boxes.shape[0]):
-            if scores is None or scores[i] > min_score_thresh:
-                num_classified += 1
+            if scores is None or scores[i] > min_score_threshold:
                 class_name = self.category_dict[classes[i]]
-
                 if class_name == 'Red':
                     num_red += 1
                 else:
