@@ -89,6 +89,6 @@ class TLClassifier(object):
         else:
             self.current_light = TrafficLight.RED
 
-        pring("### {} ### scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, scores, num_red, num_non_red)
+        rospy.logwarn("### {} ### scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, scores, num_red, num_non_red))
 
         return self.current_light
