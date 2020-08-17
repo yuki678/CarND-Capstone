@@ -57,14 +57,29 @@ cd CarND-Capstone
 pip install -r requirements.txt
 ```
 
-3. Make and run styx
+3. Download pretrained models for traffic light detection
+```
+cd ros/src/tl_detector/light_classification/
+mkdir model_trained && cd model_trained
+cp [downloaded models]
+cd ../../../../../
+```
+The trained models are available [here](https://drive.google.com/drive/folders/1_rf08IpmdFSbopUAv-2JiKQ3GZp6otI0?usp=sharing).
+ * faster_rcnn_resnet101_coco_inference_graph_sim.pb for simulator
+ * faster_rcnn_resnet101_coco_inference_graph_site.pb for real world testing
+
+Please update `ros/src/tl_detector/tl_detector.py` as follows:
+ * `CLF_ENABLED` - True when using the classifier, False when driving on test mode without classifier
+ * `CLF_NAME` - which model to use
+
+4. Make and run styx
 ```bash
 cd ros
 catkin_make
 source devel/setup.sh
 roslaunch launch/styx.launch
 ```
-4. Run the simulator
+5. Run the simulator
 
 ## Real World Testing
 1. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car.
