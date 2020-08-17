@@ -21,11 +21,12 @@ class TLClassifier(object):
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
 
+        # Model was trained to detect traffic lights with color
         self.category_dict = {
             1: 'Green', 
             2: 'Red',
             3: 'Yellow', 
-            4: 'off'
+            4: 'None'
         }
 
         # create tensorflow session for detection
@@ -53,8 +54,8 @@ class TLClassifier(object):
 
         """
         #TODO implement light color prediction
-        # return TrafficLight.RED
-
+        
+        # Prepare the input
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         (im_width, im_height, _) = image_rgb.shape
         image_np = np.expand_dims(image_rgb, axis=0)
@@ -75,23 +76,25 @@ class TLClassifier(object):
         num_red = 0
         num_non_red = 0
         light_string = "None"
+        class_scores = []
 
         for i in range(boxes.shape[0]):
+            class_name = self.category_dict[classes[i]]
+            class_scores.append("{}: {}".format(class_name, scores[i]))
             if scores is None or scores[i] > min_score_threshold:
-                class_name = self.category_dict[classes[i]]
                 if class_name == 'Red':
                     num_red += 1
                 else:
                     num_non_red += 1
 
         # Avoid stopping for red in the distance
-        if num_red < num_non_red:
+        if num_red <= num_non_red:
             self.current_light = TrafficLight.GREEN
             light_string = "Green"
         else:
             self.current_light = TrafficLight.RED
             light_string = "Red"
 
-        rospy.logwarn("### {}:{} ### scores: {}, classes: {}, num_red: {}, num_non_red: {}".format(self.current_light, light_string, scores, classes, num_red, num_non_red))
+        rospy.logwarn("### {}:{} ### class_scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, light_string, class_scores, num_red, num_non_red))
 
         return self.current_light
