@@ -74,6 +74,7 @@ class TLClassifier(object):
         min_score_threshold = .5
         num_red = 0
         num_non_red = 0
+        light_string = "None"
 
         for i in range(boxes.shape[0]):
             if scores is None or scores[i] > min_score_threshold:
@@ -86,9 +87,11 @@ class TLClassifier(object):
         # Avoid stopping for red in the distance
         if num_red < num_non_red:
             self.current_light = TrafficLight.GREEN
+            light_string = "Green"
         else:
             self.current_light = TrafficLight.RED
+            light_string = "Red"
 
-        rospy.logwarn("### {} ### scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, scores, num_red, num_non_red))
+        rospy.logwarn("### {}:{} ### scores: {}, classes: {}, num_red: {}, num_non_red: {}".format(self.current_light, light_string, scores, classes, num_red, num_non_red))
 
         return self.current_light
