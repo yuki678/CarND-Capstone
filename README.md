@@ -6,8 +6,8 @@ This project is the final project of the Udacity Self-Driving Car Nanodegree: Pr
 
 ## ROS Instrattion
 Please use **one** of the two installation options, either native **or** docker installation.
-I used ubuntu 16.04 VM on VirtualBox on my Macbook Pro 2018. It worked fine when allocating 4 CPUs and 8GB memory for test drive without object detection, but it failed when the traffic light detection was on. It worked when allocating 6 CPUs and 16GB memory.
-For simulation with traffic light detection, I used a workspace provided by Udacity as the local VM did not perform enough.
+I used ubuntu 16.04 VM on VirtualBox on my Macbook Pro 2018. It worked fine when allocating 4 CPUs and 8GB memory for test drive without object detection. For simulation with traffic light detection, I used a workspace provided by Udacity as the local VM did not perform enough for the traffic light detector to return the prediction on real-time. Note that a warm-up is required for the detector at first, so please wait for a few seconds before starting the simulation after the camera is on.
+Please refer to the recording here: https://drive.google.com/file/d/1KzjDNZ-b_slqbz9UUl-67G6UAm381euG/view?usp=sharing
 
 ### Native Installation
 
@@ -76,6 +76,7 @@ source devel/setup.sh
 roslaunch launch/styx.launch
 ```
 5. Run the simulator
+ * When the simulator starts, please tick camera on and wait for a few seconds to allow the detector warm up and tick manual off when you start seeing the log output for the traffic light prediction.
 
 ## Real World Testing
 1. Update `ros/src/tl_detector/tl_detector.py` as follows:
