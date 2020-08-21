@@ -6,15 +6,15 @@ This project is the final project of the Udacity Self-Driving Car Nanodegree: Pr
 
 ## ROS Instrattion
 Please use **one** of the two installation options, either native **or** docker installation.
-I used ubuntu 16.04 VM on VirtualBox on my Macbook Pro 2018. It worked fine when allocating 4 CPUs and 8GB memory for test drive without object detection, but it failed when traffic light detection was on.
+I used ubuntu 16.04 VM on VirtualBox on my Macbook Pro 2018. It worked fine when allocating 4 CPUs and 8GB memory for test drive without object detection, but it failed when the traffic light detection was on. It worked when allocating 6 CPUs and 16GB memory.
 For simulation with traffic light detection, I used a workspace provided by Udacity as the local VM did not perform enough.
 
 ### Native Installation
 
 * Be sure that your workstation is running Ubuntu 16.04 Xenial Xerus or Ubuntu 14.04 Trusty Tahir. [Ubuntu downloads can be found here](https://www.ubuntu.com/download/desktop).
 * If using a Virtual Machine to install Ubuntu, use the following configuration as minimum:
-  * 2 CPU
-  * 2 GB system memory
+  * 6 CPU
+  * 16 GB system memory
   * 25 GB of free hard drive space
 
   The Udacity provided virtual machine has ROS and Dataspeed DBW already installed, so you can skip the next two steps if you are using this.
@@ -62,15 +62,11 @@ pip install -r requirements.txt
 cd ros/src/tl_detector/light_classification/
 mkdir model_trained && cd model_trained
 cp [downloaded models]
-cd ../../../../../
+cd [back to top directory for CarND-Capstone repo]
 ```
-The trained models are available [here](https://drive.google.com/drive/folders/1_rf08IpmdFSbopUAv-2JiKQ3GZp6otI0?usp=sharing).
+The trained models are available [here](https://drive.google.com/drive/folders/1_rf08IpmdFSbopUAv-2JiKQ3GZp6otI0?usp=sharing). There are two models, one for simulator and the other for real world testing. The repo is configured for simulator.
  * faster_rcnn_resnet101_coco_inference_graph_sim.pb for simulator
  * faster_rcnn_resnet101_coco_inference_graph_site.pb for real world testing
-
-Please update `ros/src/tl_detector/tl_detector.py` as follows:
- * `CLF_ENABLED` - True when using the classifier, False when driving on test mode without classifier
- * `CLF_NAME` - which model to use
 
 4. Make and run styx
 ```bash
@@ -82,21 +78,33 @@ roslaunch launch/styx.launch
 5. Run the simulator
 
 ## Real World Testing
-1. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car.
-2. Unzip the file
+1. Update `ros/src/tl_detector/tl_detector.py` as follows:
+ * `CLF_NAME` - faster_rcnn_resnet101_coco_inference_graph_site.pb
+ * You can comment out line 17 and uncomment line 18
+
+2. Make
+```bash
+cd ros
+catkin_make
+source devel/setup.sh
+```
+
+3. Download [training bag](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic_light_bag_file.zip) that was recorded on the Udacity self-driving car.
+
+4. Unzip the file
 ```bash
 unzip traffic_light_bag_file.zip
 ```
-3. Play the bag file
+5. Play the bag file
 ```bash
 rosbag play -l traffic_light_bag_file/traffic_light_training.bag
 ```
-4. Launch your project in site mode
+6. Launch your project in site mode
 ```bash
 cd CarND-Capstone/ros
 roslaunch launch/site.launch
 ```
-5. Confirm that traffic light detection works on real life images
+7. Confirm that traffic light detection works on real life images
 
 ### Other library/driver information
 Outside of `requirements.txt`, here is information on other driver/library versions used in the simulator and Carla:
