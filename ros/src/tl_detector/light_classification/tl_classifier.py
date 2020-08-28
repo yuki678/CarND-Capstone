@@ -135,6 +135,6 @@ class TLClassifier(object):
             self.current_light = TrafficLight.RED
             light_string = "Red"
 
-        rospy.logwarn("### {}:{} ### class_scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, light_string, class_scores, num_red, num_non_red))
+        rospy.logwarn("## {}:{} ## class_scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, light_string, class_scores, num_red, num_non_red))
 
         return self.current_light
