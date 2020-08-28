@@ -23,10 +23,9 @@ class TLClassifier(object):
 
         # Model was trained to detect traffic lights with color
         self.category_dict = {
-            1: 'Green', 
-            2: 'Red',
-            3: 'Yellow', 
-            4: 'None'
+            0: 'Green', 
+            1: 'Yellow',
+            2: 'Red'
         }
 
         # create tensorflow session for detection
