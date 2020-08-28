@@ -20,6 +20,14 @@ class TLClassifier(object):
                 serialized_graph = fid.read()
                 od_graph_def.ParseFromString(serialized_graph)
                 tf.import_graph_def(od_graph_def, name='')
+            # Tensors from frozen_graph
+            self.image_tensor = self.frozen_graph.get_tensor_by_name('image_tensor:0')
+
+            # Boxes, Scores and Classes
+            self.detection_boxes = self.frozen_graph.get_tensor_by_name('detection_boxes:0')
+            self.detection_scores = self.frozen_graph.get_tensor_by_name('detection_scores:0')
+            self.detection_classes = self.frozen_graph.get_tensor_by_name('detection_classes:0')
+            self.num_detections = self.frozen_graph.get_tensor_by_name('num_detections:0')
 
         # Model was trained to detect traffic lights with color
         self.category_dict = {
@@ -31,16 +39,43 @@ class TLClassifier(object):
         # create tensorflow session for detection
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True
-        self.sess = tf.Session(graph=self.frozen_graph, config=config)
+        self.sess = tf.Session(graph=self.frozen_graph)
 
-        # Tensors from frozen_graph
-        self.image_tensor = self.frozen_graph.get_tensor_by_name('image_tensor:0')
+    def to_image_coords(self, boxes, height, width):
+        """
+        The original box coordinate output is normalized, i.e [0, 1].
+        
+        This converts it back to the original coordinate based on the image
+        size.
+        """
+        box_coords = np.zeros_like(boxes)
+        box_coords[:, 0] = boxes[:, 0] * height
+        box_coords[:, 1] = boxes[:, 1] * width
+        box_coords[:, 2] = boxes[:, 2] * height
+        box_coords[:, 3] = boxes[:, 3] * width
+        
+        return box_coords
 
-        # Boxes, Scores and Classes
-        self.detection_boxes = self.frozen_graph.get_tensor_by_name('detection_boxes:0')
-        self.detection_scores = self.frozen_graph.get_tensor_by_name('detection_scores:0')
-        self.detection_classes = self.frozen_graph.get_tensor_by_name('detection_classes:0')
-        self.num_detections = self.frozen_graph.get_tensor_by_name('num_detections:0')
+    def draw_boxes(self, image, boxes, classes, scores):
+        """Draw bounding boxes on the image"""
+        for i in range(len(boxes)):
+            top, left, bot, right = boxes[i, ...]
+            cv2.rectangle(image, (left, top), (right, bot), (255,0,0), 3)
+            text = LIGHTS[int(classes[i])-1] + ': ' + str(int(scores[i]*100)) + '%'
+            cv2.putText(image , text, (left, int(top - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (200,0,0), 1, cv2.LINE_AA)
+
+    def filter_boxes(self, min_score, boxes, scores, classes):
+        """Return boxes with a confidence >= `min_score`"""
+        n = len(classes)
+        idxs = []
+        for i in range(n):
+            if scores[i] >= min_score:
+                idxs.append(i)
+        
+        filtered_boxes = boxes[idxs, ...]
+        filtered_scores = scores[idxs, ...]
+        filtered_classes = classes[idxs, ...]
+        return filtered_boxes, filtered_scores, filtered_classes
 
     def get_classification(self, image):
         """Determines the color of the traffic light in the image
@@ -85,6 +120,12 @@ class TLClassifier(object):
                     num_red += 1
                 else:
                     num_non_red += 1
+
+        image = np.dstack((image[:, :, 2], image[:, :, 1], image[:, :, 0]))
+        width, height = image.shape[1], image.shape[0]
+        box_coords = self.to_image_coords(boxes, height, width) 
+        self.draw_boxes(image, box_coords, classes, scores)
+        cv2.imwrite('img.jpg', image)
 
         # Avoid stopping for red in the distance
         if num_red <= num_non_red:
