@@ -73,7 +73,7 @@ class TLDetector(object):
 
     def traffic_cb(self, msg):
         self.lights = msg.lights
-        rospy.logwarn("An traffic light of {} received.".format(self.lights))
+        print("An traffic light of {} received.".format(self.lights))
 
     def image_cb(self, msg):
         """Identifies red lights in the incoming camera image and publishes the index
@@ -83,7 +83,7 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
-        rospy.logwarn("An image received.")
+        print("An image received.")
         self.has_image = True
         self.camera_image = msg
         light_wp, state = self.process_traffic_lights()
