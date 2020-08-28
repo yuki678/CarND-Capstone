@@ -14,8 +14,9 @@ from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
 CLF_ENABLED = True
-CLF_NAME = 'faster_rcnn_resnet101_coco_inference_graph_sim.pb'
+# CLF_NAME = 'faster_rcnn_resnet101_coco_inference_graph_sim.pb'
 # CLF_NAME = 'faster_rcnn_resnet101_coco_inference_graph_site.pb'
+CLF_NAME = 'ssd_mobilenet_sim.pb'
 
 class TLDetector(object):
     def __init__(self):
