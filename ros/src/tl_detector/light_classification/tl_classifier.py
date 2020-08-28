@@ -23,9 +23,9 @@ class TLClassifier(object):
 
         # Model was trained to detect traffic lights with color
         self.category_dict = {
-            0: 'Green', 
-            1: 'Yellow',
-            2: 'Red'
+            1: 'green', 
+            2: 'yellow',
+            3: 'red'
         }
 
         # create tensorflow session for detection
@@ -81,7 +81,7 @@ class TLClassifier(object):
             class_name = self.category_dict[classes[i]]
             class_scores.append("{}: {}".format(class_name, scores[i]))
             if scores is None or scores[i] > min_score_threshold:
-                if class_name == 'Red':
+                if class_name == 'red':
                     num_red += 1
                 else:
                     num_non_red += 1
