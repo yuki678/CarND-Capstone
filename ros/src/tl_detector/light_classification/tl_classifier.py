@@ -5,10 +5,11 @@ import cv2
 import numpy as np
 import rospy
 import tensorflow as tf
+import datetime
+
 class TLClassifier(object):
     def __init__(self, model_name):
         #TODO load classifier
-        self.current_light = TrafficLight.UNKNOWN
 
         # load frozen model
         cwd = os.path.dirname(os.path.realpath(__file__))
@@ -29,24 +30,24 @@ class TLClassifier(object):
             self.detection_classes = self.frozen_graph.get_tensor_by_name('detection_classes:0')
             self.num_detections = self.frozen_graph.get_tensor_by_name('num_detections:0')
 
+        # create tensorflow session for detection
+        self.sess = tf.Session(graph=self.frozen_graph)
+
         # Model was trained to detect traffic lights with color
         self.category_dict = {
             1: 'green', 
             2: 'yellow',
-            3: 'red'
+            3: 'red',
+            4: 'none'
         }
 
-        # create tensorflow session for detection
-        config = tf.ConfigProto()
-        config.gpu_options.allow_growth = True
-        self.sess = tf.Session(graph=self.frozen_graph)
+        # create output image directory
+        self.out_dir = 'images'
+        os.mkdir(self.out_dir)
 
     def to_image_coords(self, boxes, height, width):
         """
-        The original box coordinate output is normalized, i.e [0, 1].
-        
-        This converts it back to the original coordinate based on the image
-        size.
+        The original box coordinate output is normalized, i.e [0, 1], so it converts back to the original coordinate.
         """
         box_coords = np.zeros_like(boxes)
         box_coords[:, 0] = boxes[:, 0] * height
@@ -61,7 +62,7 @@ class TLClassifier(object):
         for i in range(len(boxes)):
             top, left, bot, right = boxes[i, ...]
             cv2.rectangle(image, (left, top), (right, bot), (255,0,0), 3)
-            text = LIGHTS[int(classes[i])-1] + ': ' + str(int(scores[i]*100)) + '%'
+            text = self.category_dict[classes[i]] + ': ' + str(int(scores[i]*100)) + '%'
             cv2.putText(image , text, (left, int(top - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (200,0,0), 1, cv2.LINE_AA)
 
     def filter_boxes(self, min_score, boxes, scores, classes):
@@ -106,35 +107,31 @@ class TLClassifier(object):
         classes = np.squeeze(classes).astype(np.int32)
         
         # Thresholds
-        min_score_threshold = .5
-        num_red = 0
-        num_non_red = 0
-        light_string = "None"
-        class_scores = []
+        min_score_threshold = 0.6
+        boxes, scores, classes = self.filter_boxes(min_score_threshold, boxes, scores, classes)
 
-        for i in range(boxes.shape[0]):
-            class_name = self.category_dict[classes[i]]
-            class_scores.append("{}: {}".format(class_name, scores[i]))
-            if scores is None or scores[i] > min_score_threshold:
-                if class_name == 'red':
-                    num_red += 1
-                else:
-                    num_non_red += 1
-
+        # Output the image
         image = np.dstack((image[:, :, 2], image[:, :, 1], image[:, :, 0]))
         width, height = image.shape[1], image.shape[0]
         box_coords = self.to_image_coords(boxes, height, width) 
         self.draw_boxes(image, box_coords, classes, scores)
-        cv2.imwrite('img.jpg', image)
+        timestr = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        filename = os.path.join(self.out_dir, 'image_' + timestr + '.jpg')
+        cv2.imwrite(filename, image)
 
-        # Avoid stopping for red in the distance
-        if num_red <= num_non_red:
-            self.current_light = TrafficLight.GREEN
-            light_string = "Green"
+
+        if len(scores)>0:
+            this_class = int(classes[np.argmax(scores)])
         else:
-            self.current_light = TrafficLight.RED
-            light_string = "Red"
+            this_class = 4
 
-        rospy.logwarn("## {}:{} ## class_scores: {}, num_red: {}, num_non_red: {}".format(self.current_light, light_string, class_scores, num_red, num_non_red))
+        rospy.logwarn("### {}:{} ### classes: {}, scores: {}".format(this_class, self.category_dict[classes[i]], classes, scores))
 
-        return self.current_light
+        if this_class == 1:
+            return TrafficLight.GREEN
+        elif this_class == 2:
+             return TrafficLight.YELLOW
+        elif this_class == 3:
+             return TrafficLight.RED
+
+        return TrafficLight.UNKNOWN
