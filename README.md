@@ -57,18 +57,24 @@ cd CarND-Capstone
 pip install -r requirements.txt
 ```
 
-3. Download pretrained models for traffic light detection
+3. Download pretrained models for traffic light detection (Optional)
+The trained model of SSD Mobilenet v2 is included in the repo.
+This is light and fast model which can run on relatively low spec machines, while the prediction accuracy is just good enough for the simulation.
+You can add your own model, or download fine-tuned faster rcnn resonet101 models from the below link and replace the model used for inference, which is more accurate but need much powerful machine.
+[download link](https://drive.google.com/drive/folders/1_rf08IpmdFSbopUAv-2JiKQ3GZp6otI0?usp=sharing)
+There are two models, one for simulator and the other for real world testing. The repo is configured for simulator.
+ * faster_rcnn_resnet101_coco_inference_graph_sim.pb for simulator
+ * faster_rcnn_resnet101_coco_inference_graph_site.pb for real world testing
+
 ```
 cd ros/src/tl_detector/light_classification/
 mkdir model_trained && cd model_trained
 cp [downloaded models]
 cd [back to top directory for CarND-Capstone repo]
 ```
-The trained models are available [here](https://drive.google.com/drive/folders/1_rf08IpmdFSbopUAv-2JiKQ3GZp6otI0?usp=sharing). There are two models, one for simulator and the other for real world testing. The repo is configured for simulator.
- * faster_rcnn_resnet101_coco_inference_graph_sim.pb for simulator
- * faster_rcnn_resnet101_coco_inference_graph_site.pb for real world testing
+The trained models are available 
 
-4. Make and run styx
+1. Make and run styx
 ```bash
 cd ros
 catkin_make
