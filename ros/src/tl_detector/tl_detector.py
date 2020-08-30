@@ -83,7 +83,7 @@ class TLDetector(object):
             msg (Image): image from car-mounted camera
 
         """
-        rospy.loginfo("An image received.")
+        # rospy.loginfo("An image received.")
         self.has_image = True
         self.camera_image = msg
         light_wp, state = self.process_traffic_lights()
@@ -103,7 +103,7 @@ class TLDetector(object):
             self.last_wp = light_wp
             self.upcoming_red_light_pub.publish(Int32(light_wp))
         else:
-            rospy.loginfo("Publishing previous waypoint")
+            # rospy.loginfo("Publishing previous waypoint")
             self.upcoming_red_light_pub.publish(Int32(self.last_wp))
         self.state_count += 1
 
@@ -140,8 +140,8 @@ class TLDetector(object):
 
             cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
 
-            #Get classification
-            rospy.loginfo("Get traffic light inference")
+            # Get classification
+            # rospy.loginfo("Get traffic light inference")
             return self.light_classifier.get_classification(cv_image)
 
         else:

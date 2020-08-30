@@ -126,7 +126,7 @@ class TLClassifier(object):
         else:
             this_class = 4
 
-        rospy.logwarn("### {}:{} ### classes: {}, scores: {}".format(this_class, self.category_dict[this_class], classes, scores))
+        rospy.loginfo("### {}:{} ### classes: {}, scores: {}".format(this_class, self.category_dict[this_class], classes, scores))
 
         if this_class == 1:
             return TrafficLight.GREEN
