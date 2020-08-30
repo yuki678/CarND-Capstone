@@ -12,7 +12,7 @@ import cv2
 import yaml
 from scipy.spatial import KDTree
 
-STATE_COUNT_THRESHOLD = 3
+STATE_COUNT_THRESHOLD = 4
 CLF_ENABLED = True
 # CLF_NAME = 'faster_rcnn_resnet101_coco_inference_graph_sim.pb'
 # CLF_NAME = 'faster_rcnn_resnet101_coco_inference_graph_site.pb'
