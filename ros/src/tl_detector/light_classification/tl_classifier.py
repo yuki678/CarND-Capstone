@@ -118,7 +118,8 @@ class TLClassifier(object):
         self.draw_boxes(image, box_coords, classes, scores)
         timestr = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         filename = os.path.join(self.out_dir, 'image_' + timestr + '.jpg')
-        cv2.imwrite(filename, image)
+        im_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        cv2.imwrite(filename, im_bgr)
 
 
         if len(scores)>0:
