@@ -43,7 +43,8 @@ class TLClassifier(object):
 
         # create output image directory
         self.out_dir = 'images'
-        os.mkdir(self.out_dir)
+        if not os.path.exists(self.out_dir):
+            os.mkdir(self.out_dir)
 
     def to_image_coords(self, boxes, height, width):
         """
