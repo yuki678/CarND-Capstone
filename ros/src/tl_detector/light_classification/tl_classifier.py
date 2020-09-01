@@ -112,15 +112,16 @@ class TLClassifier(object):
         boxes, scores, classes = self.filter_boxes(min_score_threshold, boxes, scores, classes)
 
         # Output the image
-        image = np.dstack((image[:, :, 2], image[:, :, 1], image[:, :, 0]))
-        width, height = image.shape[1], image.shape[0]
-        box_coords = self.to_image_coords(boxes, height, width) 
-        self.draw_boxes(image, box_coords, classes, scores)
-        timestr = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        filename = os.path.join(self.out_dir, 'image_' + timestr + '.jpg')
-        im_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        cv2.imwrite(filename, im_bgr)
-
+        output_images = False # make this True to output inference images
+        if output_images:
+            image = np.dstack((image[:, :, 2], image[:, :, 1], image[:, :, 0]))
+            width, height = image.shape[1], image.shape[0]
+            box_coords = self.to_image_coords(boxes, height, width) 
+            self.draw_boxes(image, box_coords, classes, scores)
+            timestr = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+            filename = os.path.join(self.out_dir, 'image_' + timestr + '.jpg')
+            im_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            cv2.imwrite(filename, im_bgr)
 
         if len(scores)>0:
             this_class = int(classes[np.argmax(scores)])
