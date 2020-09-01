@@ -162,27 +162,30 @@ Note that Model Zoo was updated and links are not correct in the README in the a
 
 #### 2. Setup tensorflow models to use Object Detection API
 Clone tensorflow model repo, https://github.com/tensorflow/models/. I referred to this blog post to setup the tool and perform the object detection: [Step by Step TensorFlow Object Detection API Tutorial](https://medium.com/@WuStangDan/step-by-step-tensorflow-object-detection-api-tutorial-part-1-selecting-a-model-a02b6aabe39e)
-This post has five sections to cover all processes and good to follow, while is a bit out dated.
+This post has five sections to cover all processes from environment setup to inference and good to follow, while is a bit out dated.
 
-I used the faster rcnn model, pretrained on CoCo dataset because of facing some difficulty on version compatibility, espicially because of tensorflow version 2 compatibility to tensorflor v1.3 in the Udacity workspace.
-This blog post provided nice conversion of models trained later version of tensorflow 1.x to v1.3: https://github.com/marcomarasca/SDCND-Traffic-Light-Detection#Converting-for-Tensorflow-13
+This is my github repo for Traffic Light detection: https://github.com/yuki678/driving-object-detection.git
 
-One I will try later is to use other pretrained models on Model Zoo - [Open Model Zoo GitHub Repo](https://github.com/openvinotoolkit/open_model_zoo) and decide which models to use.
+I used Tensorflow 2.3 first but the exported model could not be used in the CarND runtime of Tensorflow 1.3.
+Then, I found this repo had provided nice conversion of models trained later version of tensorflow 1.x to v1.3: https://github.com/marcomarasca/SDCND-Traffic-Light-Detection#Converting-for-Tensorflow-13, so used Tensorflow 1.14 and converted the model to Tensorflow 1.3 compatible.
 
-#### 3. Perform the transfer learning / fine tuning
+I first used the faster rcnn model, pretrained on CoCo dataset and Kitti as they seem to perform very well with reasonable performance according to Model Zoo but the inference was too slow on my machine. Submitted this as it had worked in Udacity provided workspace, but it seems the the reviewer's machine had the same problem.
+
+Then I switched to much lighter model of ssd mobilenet v2.
+FYI: Pre-trained models available for download
+* https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf1_detection_zoo.md
+* https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/tf2_detection_zoo.md
+
+#### 3. Perform the fine tuning
 Following the previous blog post, setup and train the model as
- - prepare simulator dataset
- - prepare real site dataset
- - replace the last layer to four output - Green Traffic Light, Yellow Traffic Light, Red Traffic Light, None.
- - train the model on simulator dataset (this is for simulator)
- - train the model on real site dataset (this is for real world testing)
+ - prepare training dataset
+ - replace the last layer to output traffic light - green, yellow or red - in the pipeline
+ - train the model, export and convert
 
-This time, I tried to detect and classify the traffic light with colors as it was simple to implement, but not so efficient architecture.
-Later, I will try to first detect the areas of interest for a traffic light, then apply classification of green/yellow/red for the detected areas.
-The efficiency and the accuracy have to be balanced carefully as autonomous driving car requires realtime - at least less than 50ms to predict an image from the camera.
+I wrote up the details in https://github.com/yuki678/driving-object-detection/blob/master/README.md
 
 #### 4. Deploy the model
-Saving the checkpoint model as .pb file - frozen inference graph.
+Cpy the frozen inference graph (*.pb) to `ros/src/tl_detector/light_classification/model_trained/`.
 Updated `tf_classifier.py` and `tf_detector.py` to use the trained model to use the model to predict if there is a red traffic light in front of the vehicle from camera images in realtime.
 
 #### 5. Make sure it performs!
