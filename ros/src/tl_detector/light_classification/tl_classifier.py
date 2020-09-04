@@ -132,7 +132,7 @@ class TLClassifier(object):
         
         now = rospy.get_time()
         duration = round(now - self.start_time, 1)
-        rospy.loginfo({} secs - "### {}:{} ### classes: {}, scores: {}".format(duration, this_class, self.category_dict[this_class], classes, scores))
+        rospy.loginfo("{} secs - ### {}:{} ### classes: {}, scores: {}".format(duration, this_class, self.category_dict[this_class], classes, scores))
 
         if this_class == 1:
             return TrafficLight.GREEN
