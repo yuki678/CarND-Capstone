@@ -41,11 +41,12 @@ class Controller(object):
             self.throttle_controller.reset()
             return 0., 0., 0.
 
-        current_vel = self.vel_lpf.filt(current_vel)
+        current_vel = self.vel_lpf.filt(current_vel) / ONE_MPH
+        linear_vel = linear_vel / ONE_MPH
 
         steering = self.yaw_controller.get_steering(linear_vel, angular_vel, current_vel)
 
-        vel_error = linear_vel / ONE_MPH - current_vel
+        vel_error = linear_vel - current_vel
         self.last_vel = current_vel
 
         current_time = rospy.get_time()
