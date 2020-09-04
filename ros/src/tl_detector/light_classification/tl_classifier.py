@@ -11,7 +11,7 @@ class TLClassifier(object):
     def __init__(self, model_name):
         #TODO load classifier
 
-        self.start_time = rospy.get_time()
+        self.first_call = True
 
         # load frozen model
         cwd = os.path.dirname(os.path.realpath(__file__))
@@ -110,7 +110,7 @@ class TLClassifier(object):
         classes = np.squeeze(classes).astype(np.int32)
         
         # Thresholds
-        min_score_threshold = 0.6
+        min_score_threshold = 0.2
         boxes, scores, classes = self.filter_boxes(min_score_threshold, boxes, scores, classes)
 
         # Output the image
@@ -130,6 +130,9 @@ class TLClassifier(object):
         else:
             this_class = 4
         
+        if self.first_call:
+            self.start_time = rospy.get_time()
+            self.first_call = False
         now = rospy.get_time()
         duration = round(now - self.start_time, 1)
         rospy.loginfo("{} secs - ### {}:{} ### classes: {}, scores: {}".format(duration, this_class, self.category_dict[this_class], classes, scores))
