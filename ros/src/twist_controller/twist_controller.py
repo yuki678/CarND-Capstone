@@ -12,12 +12,12 @@ class Controller(object):
         # TODO: Implement
         self.yaw_controller = YawController(wheel_base, steer_ratio, 0.1, max_lat_accel, max_steer_angle)
 
-        kp = 0.3
-        ki = 0.1
+        kp = 1.5
+        ki = 0.001
         kd = 0.
-        mn = 0.
-        mx = 0.5
-        self.throttle_controller = PID(kp, ki, kd, mn, mx)
+#        mn = 0.
+#        mx = 0.5
+        self.throttle_controller = PID(kp, ki, kd, mn=decel_limit, mx=accel_limit)
 
         tau = 0.5
         ts = 0.02
@@ -25,6 +25,7 @@ class Controller(object):
 
         self.vehicle_mass = vehicle_mass
         self.fuel_capacity = fuel_capacity
+        self.total_mass = vehicle_mass + fuel_capacity * GAS_DENSITY
         self.brake_deadband = brake_deadband
         self.decel_limit = decel_limit
         self.accel_limit = accel_limit
@@ -61,6 +62,6 @@ class Controller(object):
         elif throttle < .1 and vel_error < 0:
             throttle = 0
             decel = max(vel_error, self.decel_limit)
-            brake = abs(decel)*self.vehicle_mass*self.wheel_radius
+            brake = abs(decel)*self.total_mass*self.wheel_radius
 
         return throttle, brake, steering
