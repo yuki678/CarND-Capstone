@@ -11,6 +11,8 @@ class TLClassifier(object):
     def __init__(self, model_name):
         #TODO load classifier
 
+        self.start_time = rospy.get_time()
+
         # load frozen model
         cwd = os.path.dirname(os.path.realpath(__file__))
         model_path = os.path.join(cwd, "model_trained/{}".format(model_name))
@@ -127,14 +129,16 @@ class TLClassifier(object):
             this_class = int(classes[np.argmax(scores)])
         else:
             this_class = 4
-
-        rospy.loginfo("### {}:{} ### classes: {}, scores: {}".format(this_class, self.category_dict[this_class], classes, scores))
+        
+        now = rospy.get_time()
+        duration = round(now - self.start_time, 1)
+        rospy.loginfo({} secs - "### {}:{} ### classes: {}, scores: {}".format(duration, this_class, self.category_dict[this_class], classes, scores))
 
         if this_class == 1:
             return TrafficLight.GREEN
         elif this_class == 2:
-             return TrafficLight.YELLOW
+             return TrafficLight.RED # Return RED for YELLOW as well
         elif this_class == 3:
              return TrafficLight.RED
 
-        return TrafficLight.UNKNOWN
+        return TrafficLight.GREEN # Return GREEN for UNKNOWN
