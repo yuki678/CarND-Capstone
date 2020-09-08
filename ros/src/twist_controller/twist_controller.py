@@ -56,7 +56,7 @@ class Controller(object):
         brake = 0.0
 
         # Complete stop
-        if linear_vel < 0.1 and current_vel < 0.1:
+        if linear_vel == .0 and current_vel < 0.1:
             throttle = 0
             brake = 1000
 
