@@ -114,7 +114,7 @@ class TLClassifier(object):
         boxes, scores, classes = self.filter_boxes(min_score_threshold, boxes, scores, classes)
 
         # Output the image
-        output_images = False # make this True to output inference images
+        output_images = True # make this True to output inference images
         if output_images:
             image = np.dstack((image[:, :, 2], image[:, :, 1], image[:, :, 0]))
             width, height = image.shape[1], image.shape[0]
