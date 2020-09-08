@@ -120,10 +120,13 @@ class TLClassifier(object):
             width, height = image.shape[1], image.shape[0]
             box_coords = self.to_image_coords(boxes, height, width) 
             self.draw_boxes(image, box_coords, classes, scores)
+            # Setting the filename
             timestr = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
             filename = os.path.join(self.out_dir, 'image_' + timestr + '.jpg')
+            filename_com = os.path.join(self.out_dir, 'image.jpg')
             im_bgr = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             cv2.imwrite(filename, im_bgr)
+            cv2.imwrite(filename_com, im_bgr)
 
         if len(scores)>0:
             this_class = int(classes[np.argmax(scores)])
