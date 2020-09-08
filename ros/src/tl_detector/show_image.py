@@ -7,6 +7,6 @@ import cv2
 cv2.namedWindow("output", cv2.WINDOW_NORMAL)         # Create window with freedom of dimensions
 while True:
     im = cv2.imread('images/image.jpg')                  # Read image
-    imS = cv2.resize(im, (400, 300))                     # Resize image
-    cv2.imshow("output", imS)                            # Show image
-    cv2.waitKey(1)                                       # Display the image infinitely until any keypress
+    #imS = cv2.resize(im, (400, 300))                     # Resize image
+    cv2.imshow("output", im)                             # Show image
+    cv2.waitKey(1)                                       # Display and load the image infinitely
