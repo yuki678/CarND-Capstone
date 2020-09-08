@@ -9,4 +9,4 @@ while True:
     im = cv2.imread('images/image.jpg')                  # Read image
     imS = cv2.resize(im, (400, 300))                     # Resize image
     cv2.imshow("output", imS)                            # Show image
-    cv2.waitKey(0)                                       # Display the image infinitely until any keypress
+    cv2.waitKey(1)                                       # Display the image infinitely until any keypress
