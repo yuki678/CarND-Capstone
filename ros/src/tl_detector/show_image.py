@@ -5,6 +5,6 @@ import cv2
 #plt.show()
 
 while True:
-    img = cv2.imread('images/image.png')
+    img = cv2.imread('images/image.jpg')
     cv2.imshow('image', img)
     cv2.waitKey(1)
